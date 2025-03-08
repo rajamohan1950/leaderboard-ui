@@ -7,7 +7,7 @@ import { saveAs } from "file-saver";
 
 //const API_URL = "http://0.0.0.0:10000"; // Ensure this matches your FastAPI URL
 
-const API_URL = "https://leaderboard.onrender.com";
+const API_URL = "https://leaderboard-1xpb.onrender.com"
 
 function App() {
   const [leaderboard, setLeaderboard] = useState([]);
