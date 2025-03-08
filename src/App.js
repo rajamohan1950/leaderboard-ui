@@ -5,7 +5,9 @@ import { Table, Container, Button, Form } from "react-bootstrap";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-const API_URL = "http://127.0.0.1:8000"; // Ensure this matches your FastAPI URL
+//const API_URL = "http://0.0.0.0:10000"; // Ensure this matches your FastAPI URL
+
+const API_URL = "https://leaderboard.onrender.com";
 
 function App() {
   const [leaderboard, setLeaderboard] = useState([]);
