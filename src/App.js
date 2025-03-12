@@ -1,49 +1,72 @@
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { Leaderboard, BulkUpload, AddScore, BulkDownload } from "./pages";
 
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Leaderboard, BulkUpload, Metrics, Docs } from "./pages";
-import { ChartPieIcon, TableCellsIcon, UploadIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+const NavLink = ({ to, children }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+  
+  return (
+    <Link
+      to={to}
+      className={`px-4 py-2 rounded-md ${
+        isActive
+          ? "bg-blue-500 text-white"
+          : "text-gray-700 hover:bg-gray-100"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 const App = () => {
+  const [refreshLeaderboard, setRefreshLeaderboard] = useState(0);
+
+  const handleScoreAdded = () => {
+    setRefreshLeaderboard(prev => prev + 1);
+  };
+
   return (
     <Router>
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar */}
-        <nav className="w-64 bg-white shadow-lg p-4">
-          <h1 className="text-2xl font-bold text-gray-800">Leaderboard</h1>
-          <ul className="mt-4 space-y-4">
-            <li>
-              <Link to="/" className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded">
-                <ChartPieIcon className="h-5 w-5" /> <span>Metrics</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/leaderboard" className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded">
-                <TableCellsIcon className="h-5 w-5" /> <span>Leaderboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/bulk-upload" className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded">
-                <UploadIcon className="h-5 w-5" /> <span>Bulk Upload</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/docs" className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded">
-                <BookOpenIcon className="h-5 w-5" /> <span>API Docs</span>
-              </Link>
-            </li>
-          </ul>
+      <div className="min-h-screen bg-gray-50">
+        {/* Simple Header */}
+        <header className="bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <h1 className="text-2xl font-bold text-gray-900">Leaderboard</h1>
+          </div>
+        </header>
+
+        {/* Navigation */}
+        <nav className="bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 py-2">
+            <div className="flex space-x-4">
+              <NavLink to="/add-score">Add Score</NavLink>
+              <NavLink to="/bulk-upload">Upload</NavLink>
+              <NavLink to="/bulk-download">Download</NavLink>
+            </div>
+          </div>
         </nav>
 
-        {/* Main Content */}
-        <div className="flex-1 p-6 overflow-auto">
-          <Routes>
-            <Route path="/" element={<Metrics />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/bulk-upload" element={<BulkUpload />} />
-            <Route path="/docs" element={<Docs />} />
-          </Routes>
-        </div>
+        {/* Main Content with Split View */}
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex gap-8">
+            {/* Leaderboard - Always Visible */}
+            <div className="w-1/2 bg-white rounded-lg shadow p-6">
+              <Leaderboard refreshTrigger={refreshLeaderboard} />
+            </div>
+
+            {/* Right Panel - Dynamic Content */}
+            <div className="w-1/2 bg-white rounded-lg shadow p-6">
+              <Routes>
+                <Route path="/" element={<AddScore onScoreAdded={handleScoreAdded} />} />
+                <Route path="/add-score" element={<AddScore onScoreAdded={handleScoreAdded} />} />
+                <Route path="/bulk-upload" element={<BulkUpload onScoreAdded={handleScoreAdded} />} />
+                <Route path="/bulk-download" element={<BulkDownload />} />
+              </Routes>
+            </div>
+          </div>
+        </main>
       </div>
     </Router>
   );
